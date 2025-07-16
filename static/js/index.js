@@ -596,6 +596,21 @@
       }
     }, [commentsLoading]);
 
+    // Update "Add Image" button visibility when auth status or gallery changes
+    meact.useEffect(() => {
+      // Show toggle image form button if the user is authed and owns the current gallery
+      if (
+        getIsAuthed() &&
+        getCurUserGallery() &&
+        getUsername() === getCurUserGallery().username &&
+        !getImageLoading()
+      ) {
+        document.querySelector("#toggle-image-form").classList.remove("hidden");
+      } else {
+        document.querySelector("#toggle-image-form").classList.add("hidden");
+      }
+    }, [isAuthed, username, curUserGallery, imageLoading]);
+
     // Event Listener for creating new image
     document
       .querySelector("#create-image-form")
