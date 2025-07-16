@@ -1,0 +1,784 @@
+# This file was generated with Github Copilot using the prompt:
+# Generate an OpenAPI Specification based on the following files:
+# - models/users.js, models/image.js, models/comments.js
+# - routers/user_router.js,  routers/image_router.js, routers/comment_router.js
+
+openapi: 3.0.0
+info:
+  title: The Web Gallery API
+  version: 1.0.0
+  description: |
+    RESTful API for managing users, images, and comments in a web gallery application.
+
+    Features:
+    - User authentication with session tokens that expire after 1 hour
+    - Image upload and management
+    - Comment system for images
+    - User galleries
+
+    Authentication:
+    - Bearer token authentication required for most endpoints
+    - Tokens expire after 1 hour and must be refreshed by logging in again
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Session token obtained from login. Tokens expire after 1 hour.
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: "johndoe"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "My vacation photo"
+        imageMetadata:
+          type: object
+          properties:
+            mimetype:
+              type: string
+              example: "image/jpeg"
+            path:
+              type: string
+              example: "/uploads/abc123.jpg"
+            originalName:
+              type: string
+              example: "vacation.jpg"
+        author:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: "This is a great photo!"
+        author:
+          type: integer
+          example: 1
+        imageId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid credentials"
+
+    CountResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 42
+
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "abc123def456"
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User signed out"
+
+    UserSignupRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: "johndoe"
+        password:
+          type: string
+          example: "password123"
+
+    UserLoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: "johndoe"
+        password:
+          type: string
+          example: "password123"
+
+    CommentCreateRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          example: "This is a great photo!"
+
+paths:
+  /api/users/signup:
+    post:
+      summary: Create a new user account
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSignupRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: Invalid input or user already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/users/login:
+    post:
+      summary: Authenticate user and get session token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/users/logout:
+    post:
+      summary: Log out user and invalidate session token
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/users/me:
+    get:
+      summary: Get current user profile
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/users/count:
+    get:
+      summary: Get total number of users
+      tags:
+        - Users
+      responses:
+        "200":
+          description: User count retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountResponse"
+
+  /api/users:
+    get:
+      summary: Get paginated list of users
+      tags:
+        - Users
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page number (0-indexed)
+      responses:
+        "200":
+          description: Users retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid page parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/users/{userId}/images:
+    get:
+      summary: Get images from a specific user's gallery
+      tags:
+        - User Gallery
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: User ID
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page number (0-indexed)
+      responses:
+        "200":
+          description: User gallery images retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Image"
+        "400":
+          description: Invalid user ID or page parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/users/{userId}/images/count:
+    get:
+      summary: Get count of images in a specific user's gallery
+      tags:
+        - User Gallery
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: User ID
+      responses:
+        "200":
+          description: User gallery image count retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountResponse"
+        "400":
+          description: Invalid user ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/images:
+    get:
+      summary: Get paginated list of all images
+      tags:
+        - Images
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page number (0-indexed)
+      responses:
+        "200":
+          description: Images retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Image"
+        "400":
+          description: Invalid page parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Upload a new image
+      tags:
+        - Images
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - file
+              properties:
+                title:
+                  type: string
+                  example: "My vacation photo"
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "400":
+          description: Invalid input or file format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/images/{id}:
+    get:
+      summary: Get image details by ID
+      tags:
+        - Images
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+      responses:
+        "200":
+          description: Image details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "400":
+          description: Invalid image ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Delete an image
+      tags:
+        - Images
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+      responses:
+        "200":
+          description: Image deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "400":
+          description: Invalid image ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Permission denied - user can only delete their own images
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/images/{id}/file:
+    get:
+      summary: Get the actual image file
+      tags:
+        - Images
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+      responses:
+        "200":
+          description: Image file retrieved
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Invalid image ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image or file not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/images/{imageId}/comments:
+    get:
+      summary: Get comments for a specific image
+      tags:
+        - Comments
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page number (0-indexed)
+      responses:
+        "200":
+          description: Comments retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+        "400":
+          description: Invalid image ID or page parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Add a comment to an image
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentCreateRequest"
+      responses:
+        "201":
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Invalid input or image ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/images/{imageId}/comments/count:
+    get:
+      summary: Get count of comments for a specific image
+      tags:
+        - Comments
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+      responses:
+        "200":
+          description: Comment count retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountResponse"
+        "400":
+          description: Invalid image ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/images/{imageId}/comments/{commentId}:
+    get:
+      summary: Get a specific comment
+      tags:
+        - Comments
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Comment ID
+      responses:
+        "200":
+          description: Comment retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Invalid image or comment ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image or comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Delete a comment
+      tags:
+        - Comments
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Image ID
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Comment ID
+      responses:
+        "200":
+          description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Invalid image or comment ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Permission denied - user can only delete their own comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Image or comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Users
+    description: User management endpoints
+  - name: User Gallery
+    description: User-specific gallery endpoints
+  - name: Images
+    description: Image management endpoints
+  - name: Comments
+    description: Comment management endpoints
