@@ -105,7 +105,7 @@
     }
   }
 
-  function ImageComponent(image) {
+  function imageComponent(image) {
     const elmt = document.createElement("div");
     elmt.className = "image-comment-container";
     elmt.innerHTML = `<div class="image-container">
@@ -190,11 +190,13 @@
     return elmt;
   }
 
-  function CommentComponent(comment, imageId) {
+  function commentComponent(comment, imageId) {
     // Get the current user
     const currentUser = getUsername();
     // Get the comment user
     const commentUser = comment.User.username;
+    // Get the image owner (from the current image)
+    const imageOwner = getImage()?.User?.username;
 
     const elmt = document.createElement("div");
     elmt.className = "row comment";
@@ -214,8 +216,11 @@
           </div>
       `;
 
-    if (currentUser !== "" && currentUser === commentUser) {
-      // Show delete button only if cur user is the comment author
+    // Show delete button if current user is the comment author OR the gallery owner
+    if (
+      currentUser !== "" &&
+      (currentUser === commentUser || currentUser === imageOwner)
+    ) {
       elmt.querySelector("#comment-delete").classList.remove("hidden");
     }
 
@@ -280,7 +285,7 @@
     }
 
     commentList.forEach((comment) => {
-      commentContainer.append(CommentComponent(comment, String(getImage().id)));
+      commentContainer.append(commentComponent(comment, String(getImage().id)));
     });
   }
 
@@ -288,7 +293,7 @@
   function renderImage(image) {
     const container = document.querySelector(".gallery-container");
     container.innerHTML = "";
-    if (!getImageLoading() && image) container.append(ImageComponent(image));
+    if (!getImageLoading() && image) container.append(imageComponent(image));
   }
 
   // Function to Update the Gallery Image Count at Top of Screen

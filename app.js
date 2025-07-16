@@ -1,9 +1,9 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-import { imagesRouter } from "./routers/images_router.js";
-import { commentsRouter } from "./routers/comments_router.js";
-import { usersRouter } from "./routers/users_router.js";
+import { imageRouter } from "./routers/image_router.js";
+import { commentRouter } from "./routers/comment_router.js";
+import { userRouter } from "./routers/user_router.js";
 import { sequelize } from "./datasource.js";
 
 const PORT = 3000;
@@ -27,9 +27,9 @@ try {
 }
 
 // Mount routers
-app.use("/api/images", imagesRouter);
-app.use("/api/images/:imageId/comments", commentsRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/images", imageRouter);
+app.use("/api/images/:imageId/comments", commentRouter);
+app.use("/api/users", userRouter);
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);

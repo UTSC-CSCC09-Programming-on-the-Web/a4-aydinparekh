@@ -1,7 +1,7 @@
 import { sequelize } from "../datasource.js";
 import { DataTypes } from "sequelize";
-import { Image } from "./images.js";
-import { User } from "./users.js";
+import { Image } from "./image.js";
+import { User } from "./user.js";
 
 export const Comment = sequelize.define("Comment", {
   content: {

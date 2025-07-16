@@ -1,6 +1,6 @@
 import { sequelize } from "../datasource.js";
 import { DataTypes } from "sequelize";
-import { User } from "./users.js";
+import { User } from "./user.js";
 
 export const Image = sequelize.define("Image", {
   title: {

@@ -1,4 +1,4 @@
-import { Image } from "../models/images.js";
+import { Image } from "../models/image.js";
 
 import { Router } from "express";
 import multer from "multer";
@@ -8,11 +8,11 @@ import { validateInput } from "../utils/validate-input.js";
 import { authenticateToken } from "../middleware/auth.js";
 
 const upload = multer({ dest: "uploads/" });
-export const imagesRouter = Router();
+export const imageRouter = Router();
 
 // Add a new image
 // POST /images
-imagesRouter.post(
+imageRouter.post(
   "/",
   authenticateToken,
   upload.single("image"),
@@ -58,7 +58,7 @@ imagesRouter.post(
 
 // Get Image by ID
 // GET /images/:id
-imagesRouter.get("/:id", function (req, res) {
+imageRouter.get("/:id", function (req, res) {
   Promise.resolve().then(function () {
     // Validate ID as a number
     const imageId = parseInt(req.params.id);
@@ -81,7 +81,7 @@ imagesRouter.get("/:id", function (req, res) {
 
 // Serve image file
 // GET /images/:id/file
-imagesRouter.get("/:id/file", function (req, res) {
+imageRouter.get("/:id/file", function (req, res) {
   Promise.resolve().then(function () {
     const imageId = parseInt(req.params.id);
     if (isNaN(imageId) || imageId <= 0) {
@@ -103,7 +103,7 @@ imagesRouter.get("/:id/file", function (req, res) {
 
 // Delete Image by ID
 // DELETE /images/:id
-imagesRouter.delete("/:id", authenticateToken, function (req, res) {
+imageRouter.delete("/:id", authenticateToken, function (req, res) {
   Promise.resolve().then(function () {
     const imageId = parseInt(req.params.id);
     if (isNaN(imageId) || imageId <= 0) {

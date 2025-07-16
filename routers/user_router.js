@@ -1,5 +1,5 @@
-import { User } from "../models/users.js";
-import { Image } from "../models/images.js";
+import { User } from "../models/user.js";
+import { Image } from "../models/image.js";
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
@@ -7,7 +7,7 @@ import { authenticateToken } from "../middleware/auth.js";
 import { validateInput } from "../utils/validate-input.js";
 import { sessionStore } from "../utils/session-store.js";
 
-export const usersRouter = Router();
+export const userRouter = Router();
 
 const SALT_ROUNDS = 10;
 
@@ -16,7 +16,7 @@ const TOKEN_EXPIRATION = 60 * 60 * 1000;
 
 // Sign up a new user
 // POST /users/signup
-usersRouter.post("/signup", function (req, res) {
+userRouter.post("/signup", function (req, res) {
   Promise.resolve().then(function () {
     // Validate Input
     const schema = [
@@ -80,7 +80,7 @@ usersRouter.post("/signup", function (req, res) {
 
 // Login a user
 // POST /users/login
-usersRouter.post("/login", function (req, res) {
+userRouter.post("/login", function (req, res) {
   Promise.resolve().then(function () {
     // Validate Input
     const schema = [
@@ -133,7 +133,7 @@ usersRouter.post("/login", function (req, res) {
 
 // Logout the user
 // POST /users/logout
-usersRouter.post("/logout", authenticateToken, function (req, res) {
+userRouter.post("/logout", authenticateToken, function (req, res) {
   const authHeader = req.headers["authorization"];
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Authentication required." });
@@ -147,7 +147,7 @@ usersRouter.post("/logout", authenticateToken, function (req, res) {
 
 // Get the current user
 // GET /users/me
-usersRouter.get("/me", authenticateToken, function (req, res) {
+userRouter.get("/me", authenticateToken, function (req, res) {
   Promise.resolve()
     .then(function () {
       return User.findByPk(req.userId);
@@ -164,7 +164,7 @@ usersRouter.get("/me", authenticateToken, function (req, res) {
 });
 
 // GET /users/count
-usersRouter.get("/count", function (req, res) {
+userRouter.get("/count", function (req, res) {
   Promise.resolve()
     .then(function () {
       return User.count().then((count) => {
@@ -179,7 +179,7 @@ usersRouter.get("/count", function (req, res) {
 /* Gallery Routes */
 // Paginated List of Users
 // GET /users?page=<page>
-usersRouter.get("/", function (req, res) {
+userRouter.get("/", function (req, res) {
   Promise.resolve().then(function () {
     const offset = parseInt(req.query.page) || 0;
     const limit = 1;
@@ -213,7 +213,7 @@ usersRouter.get("/", function (req, res) {
 
 // Get Paginated Image
 // GET /users/:userId/images?page=<page>
-usersRouter.get("/:userId/images", function (req, res) {
+userRouter.get("/:userId/images", function (req, res) {
   Promise.resolve().then(function () {
     const userId = parseInt(req.params.userId);
     const offset = parseInt(req.query.page);
@@ -259,7 +259,7 @@ usersRouter.get("/:userId/images", function (req, res) {
 
 // Get total number of images
 // GET /users/:userId/images/count
-usersRouter.get("/:userId/images/count", function (req, res) {
+userRouter.get("/:userId/images/count", function (req, res) {
   Promise.resolve().then(function () {
     const userId = parseInt(req.params.userId);
     if (userId === undefined || isNaN(userId) || userId <= 0) {

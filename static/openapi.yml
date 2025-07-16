@@ -1,7 +1,7 @@
 # This file was generated with Github Copilot using the prompt:
 # Generate an OpenAPI Specification based on the following files:
 # - models/users.js, models/image.js, models/comments.js
-# - routers/users_router.js,  routers/images_router.js, routers/comments_router.js
+# - routers/user_router.js,  routers/image_router.js, routers/comment_router.js
 
 openapi: 3.0.0
 info:

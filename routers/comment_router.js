@@ -1,15 +1,15 @@
-import { Comment } from "../models/comments.js";
-import { Image } from "../models/images.js";
-import { User } from "../models/users.js";
+import { Comment } from "../models/comment.js";
+import { Image } from "../models/image.js";
+import { User } from "../models/user.js";
 import { Router } from "express";
 import { validateInput } from "../utils/validate-input.js";
 import { authenticateToken } from "../middleware/auth.js";
 
-export const commentsRouter = Router({ mergeParams: true });
+export const commentRouter = Router({ mergeParams: true });
 
 // Add a new comment to a specific image
 // POST /images/:imageId/comments
-commentsRouter.post("/", authenticateToken, function (req, res) {
+commentRouter.post("/", authenticateToken, function (req, res) {
   Promise.resolve().then(function () {
     // Validate image ID as a number
     const imageId = parseInt(req.params.imageId);
@@ -57,7 +57,7 @@ commentsRouter.post("/", authenticateToken, function (req, res) {
 
 // Get the total number of comments for a specific image
 // GET /images/:imageId/comments/count
-commentsRouter.get("/count", authenticateToken, function (req, res) {
+commentRouter.get("/count", authenticateToken, function (req, res) {
   Promise.resolve().then(function () {
     // Validate image ID as a number
     const imageId = parseInt(req.params.imageId);
@@ -81,7 +81,7 @@ commentsRouter.get("/count", authenticateToken, function (req, res) {
 
 // Delete a comment from a specific image
 // DELETE /images/:imageId/comments/:commentId
-commentsRouter.delete("/:commentId", authenticateToken, function (req, res) {
+commentRouter.delete("/:commentId", authenticateToken, function (req, res) {
   Promise.resolve().then(function () {
     // Validate image ID as a number
     const imageId = parseInt(req.params.imageId);
@@ -136,7 +136,7 @@ commentsRouter.delete("/:commentId", authenticateToken, function (req, res) {
 
 // Get a single comment by ID for a specific image
 // GET /images/:imageId/comments/:commentId
-commentsRouter.get("/:commentId", authenticateToken, function (req, res) {
+commentRouter.get("/:commentId", authenticateToken, function (req, res) {
   Promise.resolve().then(function () {
     // Validate image ID as a number
     const imageId = parseInt(req.params.imageId);
@@ -170,7 +170,7 @@ commentsRouter.get("/:commentId", authenticateToken, function (req, res) {
 
 // Get comments for a specific image with pagination
 // GET /images/:imageId/comments?page=<page>&limit=<limit>
-commentsRouter.get("/", authenticateToken, function (req, res) {
+commentRouter.get("/", authenticateToken, function (req, res) {
   Promise.resolve().then(function () {
     // Validate query parameters
     const page = req.query.page !== undefined ? parseInt(req.query.page) : 0;
