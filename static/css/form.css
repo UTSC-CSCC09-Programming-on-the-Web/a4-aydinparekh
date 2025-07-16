@@ -1,0 +1,73 @@
+.complex-form {
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  margin: 0 0 10px 0;
+
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.7s ease-out,
+    opacity 0.7s ease-out,
+    padding 0.7s ease-out;
+}
+
+/* This snippet of code was tailored from CSS Tricks*/
+.complex-form:not(.hidden) {
+  padding: 10px;
+  display: flex;
+  opacity: 1;
+  max-height: 500px;
+}
+
+.complex-form .form-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 20px 0;
+  padding: 10px 0px 10px 10px;
+  color: white;
+  background-color: darkslateblue;
+  border-radius: 7px 7px 0px 0px;
+}
+
+.complex-form .form-element {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+/* This snippet of code was generated using: http://css3buttongenerator.com/ */
+
+.btn {
+  border-radius: 10px;
+  text-align: center;
+  font-size: 16px;
+  background: darkslateblue;
+  color: #f9f9f9;
+  padding: 10px;
+  border: none;
+  box-shadow: 0 5px #999;
+}
+
+.btn:hover {
+  background: #3c3d3f;
+  color: #ffffff;
+  cursor: grab;
+}
+
+/* Button Click animation taken from W3Schools */
+.btn:active {
+  background-color: darkslateblue;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+/* Auth Button Styles */
+.auth-btn {
+  margin: 0 0 10px 0;
+}

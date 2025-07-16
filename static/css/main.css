@@ -1,0 +1,106 @@
+html {
+  overflow: -moz-scrollbars-vertical;
+}
+
+.row {
+  max-width: 95%;
+  margin: auto;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+.header-container {
+  border-bottom: 1px solid #ccc;
+}
+.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin: 20px 0;
+  height: 64px;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  text-align: center;
+}
+
+.right-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.credits-container {
+  margin: 20px 0;
+  text-align: center;
+  border-top: 1px solid #ccc;
+}
+
+.title {
+  color: darkslateblue;
+  text-decoration: none;
+  margin: 0px;
+  width: 100%;
+  font-size: 50px;
+}
+
+.footer-title {
+  text-decoration: none;
+}
+
+.left-panel {
+  padding: 0 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.right-panel {
+  padding: 0 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.center-panel {
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  align-items: center;
+}
+
+@media (max-width: 576px) {
+  body {
+    max-width: 95%;
+    margin: auto;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.error-box {
+  color: red;
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+}
+
+/* Code taken from my own Lab 4 Implementation - Inspired by W3Schools*/
+.spinner {
+  border: 10px solid #f3f3f3; /* Light grey */
+  border-top: 10px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
